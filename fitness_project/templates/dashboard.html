@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+{% load static %}
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FitnessPro - Dashboard</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+    <!-- Header Navigation -->
+    <header>
+        <nav>
+            <a href="#" class="logo">
+                <span class="logo-icon">💪</span>
+                <span>FitnessPro</span>
+            </a>
+            <ul class="nav-links">
+                <li><a href="{% url 'dashboard' %}">Dashboard</a></li>
+                <li><a href="/workout/">Workouts</a></li>
+                <li><a href="/diet/">Diet Plans</a></li>
+                <li><a href="{% url 'view_reminders' %}">Reminders</a></li>
+                <li><a href="{% url 'profile' %}">Profile</a></li>
+            </ul>
+            <div class="user-info">
+                <span>👤 {{ request.user.username }}</span>
+                <a href="{% url 'logout' %}" class="logout-btn">Logout</a>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <div class="content-wrapper">
+        <div class="container">
+            <!-- Welcome Section -->
+            <div class="card">
+                <div class="card-header">
+                    <div>
+                        <h2>Welcome back, {{ request.user.username }}! 👋</h2>
+                        <p style="margin: 0; color: #6b7280;">Your AI-powered fitness assistant is ready to help you achieve your goals</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Profile Summary Stats -->
+            <div class="grid">
+                <div class="stats-box">
+                    <h3>Height (in m)</h3>
+                    <div class="value">{{ height|default:"N/A" }}</div>
+                    <!-- <p style="margin: 0; opacity: 0.9;">meters</p> -->
+                </div>
+                <div class="stats-box">
+                    <h3>Weight (in kg)</h3>
+                    <div class="value">{{ weight|default:"N/A" }}</div>
+                    <!-- <p style="margin: 0; opacity: 0.9;">kg</p> -->
+                </div>
+                <div class="stats-box">
+                    <h3>BMI</h3>
+                    <div class="value">{{ bmi|default:"N/A" }}</div>
+                    <!-- <p style="margin: 0; opacity: 0.9;">Body Mass Index</p> -->
+                </div>
+            </div>
+
+            <!-- Profile Details Card -->
+            <div class="card">
+                <div class="card-header">
+                    <h2>Your Profile Summary</h2>
+                </div>
+                <div class="card-body">
+                    <div class="profile-info">
+                        <div class="info-item">
+                            <div class="info-label">Category</div>
+                            <div class="info-value">{{ category }}</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Height</div>
+                            <div class="info-value">{{ height|default:"N/A" }}m</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Weight</div>
+                            <div class="info-value">{{ weight|default:"N/A" }}kg</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">BMI Status</div>
+                            <div class="info-value">{{ bmi|default:"N/A" }}</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer text-center">
+                    <a href="{% url 'profile' %}" class="btn">✏️ Update Profile</a>
+                </div>
+            </div>
+
+            <!-- Action Cards -->
+            <div class="grid-2">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 style="margin: 0;">🏋️ Workout Plans</h3>
+                    </div>
+                    <div class="card-body">
+                        <p>Get personalized AI-generated 7-day workout plans based on your fitness level and goals.</p>
+                    </div>
+                    <div class="card-footer">
+                        <a href="/workout/" class="btn btn-block">Generate Workout</a>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h3 style="margin: 0;">🍎 Diet Plans</h3>
+                    </div>
+                    <div class="card-body">
+                        <p>Access customized meal plans and nutrition guidance tailored to your fitness objectives.</p>
+                    </div>
+                    <div class="card-footer">
+                        <a href="/diet/" class="btn btn-block">View Diet Plan</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Stats -->
+            <div class="card">
+                <div class="card-header">
+                    <h3 style="margin: 0;">📊 Quick Stats</h3>
+                </div>
+                <div class="card-body">
+                    <div class="profile-info">
+                        <div class="info-item">
+                            <div class="info-label">Account Status</div>
+                            <div style="font-size: 1.2rem; color: var(--primary-color); font-weight: 600;">Active ✓</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Profile Completion</div>
+                            <div style="font-size: 1.2rem; color: var(--primary-color); font-weight: 600;">100%</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Fitness Level</div>
+                            <div style="font-size: 1.2rem; color: var(--primary-color); font-weight: 600;">Tracking</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Workout Reminders & Status -->
+            <div class="grid-2">
+                <!-- Pending Reminders -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3 style="margin: 0;">⏰ Pending Reminders</h3>
+                    </div>
+                    <div class="card-body" style="max-height: 400px; overflow-y: auto;">
+                        {% if reminders %}
+                            {% for reminder in reminders %}
+                                {% if reminder.status == 'pending' %}
+                                    <div style="padding: 1rem; border-left: 4px solid #f59e0b; background: #fffbeb; margin-bottom: 0.75rem; border-radius: 4px;">
+                                        <div style="font-weight: 600; color: #92400e; margin-bottom: 0.25rem;">{{ reminder.title }}</div>
+                                        <div style="font-size: 0.9rem; color: #b45309; margin-bottom: 0.5rem;">{{ reminder.description }}</div>
+                                        <div style="font-size: 0.85rem; color: #78350f;">📅 {{ reminder.reminder_date }}</div>
+                                    </div>
+                                {% endif %}
+                            {% endfor %}
+                            {% if reminders|length == 0 or reminders|dictsort:"status"|length == 0 %}
+                                <div class="alert alert-success">
+                                    <span>✅</span>
+                                    <p style="margin: 0;">No pending reminders! Keep up the great work!</p>
+                                </div>
+                            {% endif %}
+                        {% else %}
+                            <div class="alert alert-success">
+                                <span>✅</span>
+                                <p style="margin: 0;">No pending reminders! Keep up the great work!</p>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Weekly Workout Summary -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3 style="margin: 0;">📈 Weekly Workout Summary</h3>
+                    </div>
+                    <div class="card-body">
+                        <div style="margin-bottom: 1.5rem;">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 1rem;">
+                                <div style="text-align: center;">
+                                    <div style="font-size: 2rem; font-weight: 700; color: #10b981;">{{ completed_count }}</div>
+                                    <div style="color: #6b7280; font-size: 0.9rem;">Completed</div>
+                                </div>
+                                <div style="text-align: center;">
+                                    <div style="font-size: 2rem; font-weight: 700; color: #ef4444;">{{ pending_count }}</div>
+                                    <div style="color: #6b7280; font-size: 0.9rem;">Pending</div>
+                                </div>
+                            </div>
+                            <div style="background: #e5e7eb; height: 10px; border-radius: 5px; overflow: hidden;">
+                                {% if completed_count|add:pending_count > 0 %}
+                                {% else %}
+                                    <div style="background: #d1d5db; height: 100%;"></div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        {% if today_log %}
+                            <div id="padding_div">
+                                <div style="font-weight: 600; margin-bottom: 0.25rem;">
+                                    {% if today_log.completed %}
+                                        <span style="color: #047857;">✅ Today's Workout Completed!</span>
+                                    {% else %}
+                                        <span style="color: #991b1b;">⚠️ Today's Workout Pending</span>
+                                    {% endif %}
+                                </div>
+                                <div id="padding_div">
+                                    Day {{ today_log.workout_day }} of 7
+                                </div> 
+                            </div>
+                        {% else %}
+                            <div class="alert alert-info">
+                                <span>ℹ️</span>
+                                <p style="margin: 0;">Start your workout journey today!</p>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Detailed Workout Log -->
+            <div class="card">
+                <div class="card-header">
+                    <h3 style="margin: 0;">📋 This Week's Workout Log</h3>
+                </div>
+                <div class="card-body">
+                    {% if week_logs %}
+                        <div style="overflow-x: auto;">
+                            <table style="width: 100%; border-collapse: collapse;">
+                                <thead>
+                                    <tr style="background: #f3f4f6; border-bottom: 2px solid #e5e7eb;">
+                                        <th style="padding: 0.75rem; text-align: left;">Date</th>
+                                        <th style="padding: 0.75rem; text-align: left;">Day</th>
+                                        <th style="padding: 0.75rem; text-align: left;">Status</th>
+                                        <th style="padding: 0.75rem; text-align: left;">Completed At</th>
+                                        <th style="padding: 0.75rem; text-align: left;">Notes</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for log in week_logs %}
+                                        <tr style="border-bottom: 1px solid #e5e7eb;">
+                                            <td style="padding: 0.75rem;">{{ log.date }}</td>
+                                            <td style="padding: 0.75rem;">Day {{ log.workout_day }}</td>
+                                            <td style="padding: 0.75rem;">
+                                                {% if log.completed %}
+                                                    <span style="display: inline-block; padding: 0.5rem 1rem; background: #d1fae5; color: #047857; border-radius: 4px; font-weight: 600;">✅ Completed</span>
+                                                {% else %}
+                                                    <span style="display: inline-block; padding: 0.5rem 1rem; background: #fee2e2; color: #991b1b; border-radius: 4px; font-weight: 600;">⏳ Pending</span>
+                                                {% endif %}
+                                            </td>
+                                            <td style="padding: 0.75rem; font-size: 0.9rem; color: #6b7280;">
+                                                {% if log.completed_at %}
+                                                    {{ log.completed_at|date:"H:i" }}
+                                                {% else %}
+                                                    -
+                                                {% endif %}
+                                            </td>
+                                            <td style="padding: 0.75rem; font-size: 0.9rem; color: #6b7280; max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="{{ log.notes }}">
+                                                {% if log.notes %}
+                                                    📝 {{ log.notes|truncatewords:5 }}
+                                                {% else %}
+                                                    -
+                                                {% endif %}
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <div class="alert alert-info">
+                            <span>ℹ️</span>
+                            <p style="margin: 0;">No workouts logged yet. Visit the Workout section to get started!</p>
+                        </div>
+                    {% endif %}
+                </div>
+                <div class="card-footer text-center">
+                    <a href="/workout/" class="btn">🏋️ Go to Workouts</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2026 FitnessPro - Your Personal AI Fitness Assistant</p>
+        <p>Transform your fitness journey with intelligent workout and diet planning</p>
+    </footer>
+</body>
+</html>

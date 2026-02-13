@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+{% load static %}
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FitnessPro - Diet Plans</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <style>
+        .diet-header {
+            background: linear-gradient(135deg, #f59e0b 0%, #f97316 100%);
+            color: white;
+            padding: 2rem;
+            border-radius: 12px;
+            margin-bottom: 2rem;
+        }
+        .diet-header h2 {
+            color: white;
+            margin-bottom: 0.5rem;
+        }
+        .meal-card {
+            background: linear-gradient(135deg, #fef3c7 0%, #fef08a 100%);
+            border-left: 4px solid #f59e0b;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+        .meal-card:hover {
+            box-shadow: 0 4px 12px rgba(245, 158, 11, 0.2);
+            transform: translateY(-2px);
+        }
+        .meal-type {
+            display: inline-block;
+            background: white;
+            color: #f59e0b;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+        }
+        .meal-food {
+            font-size: 1.2rem;
+            color: #92400e;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .nutrition-info {
+            background: white;
+            padding: 0.75rem 1rem;
+            border-radius: 6px;
+            margin-top: 1rem;
+            font-size: 0.95rem;
+            color: #6b7280;
+        }
+        .nutrition-info strong {
+            color: #f59e0b;
+        }
+        .no-plan-alert {
+            background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+            border-left: 4px solid #ef4444;
+            padding: 1.5rem;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header Navigation -->
+    <header>
+        <nav>
+            <a href="#" class="logo">
+                <span class="logo-icon">💪</span>
+                <span>FitnessPro</span>
+            </a>
+            <ul class="nav-links">
+                <li><a href="{% url 'dashboard' %}">Dashboard</a></li>
+                <li><a href="/workout/">Workouts</a></li>
+                <li><a href="/diet/">Diet Plans</a></li>
+                <li><a href="{% url 'profile' %}">Profile</a></li>
+            </ul>
+            <div class="user-info">
+                <span>👤 {{ request.user.username }}</span>
+                <a href="{% url 'logout' %}" class="logout-btn">Logout</a>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <div class="content-wrapper">
+        <div class="container">
+            <!-- Diet Header -->
+            <div class="diet-header">
+                <h2>🍎 Your Personalized Diet Plan</h2>
+                <p style="margin: 0; opacity: 0.95;">Optimized nutrition tailored to your fitness goals</p>
+                {% if goal %}
+                <div style="margin-top: 1rem; background: rgba(255, 255, 255, 0.2); padding: 1rem; border-radius: 8px;">
+                    <strong>Goal:</strong> {{ goal }}
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Meals Section -->
+            <div class="card">
+                <div class="card-header">
+                    <h3 style="margin: 0;">📅 Daily Meal Plan</h3>
+                </div>
+
+                <div class="card-body">
+                    {% if meals %}
+                        {% for meal in meals %}
+                            <div class="meal-card">
+                                <div class="meal-type">{{ meal.meal_type|title }}</div>
+                                <div class="meal-food">
+                                    {% if meal.meal_type|title == "Breakfast" %}
+                                        🍳
+                                    {% elif meal.meal_type|title == "Lunch" %}
+                                        🍱
+                                    {% elif meal.meal_type|title == "Dinner" %}
+                                        🍽️
+                                    {% elif meal.meal_type|title == "Snack" %}
+                                        🥜
+                                    {% else %}
+                                        🥗
+                                    {% endif %}
+                                    {{ meal.food }}
+                                </div>
+                                <div class="nutrition-info">
+                                    <strong>Calories:</strong> {{ meal.calories }} kcal
+                                </div>
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <div class="no-plan-alert">
+                            <h4 style="color: #991b1b; margin-top: 0;">⚠️ No Diet Plan Available</h4>
+                            <p style="color: #991b1b; margin: 0.5rem 0;margin-bottom: 1rem;">
+                                Please complete your profile with fitness goals and measurements to generate a personalized diet plan.
+                            </p>
+                            <a href="{% url 'profile' %}" class="btn btn-small">Complete Profile</a>
+                        </div>
+                    {% endif %}
+                </div>
+
+                {% if meals %}
+                <div class="card-footer">
+                    <p style="color: #6b7280; font-size: 0.9rem; margin-bottom: 1rem;">
+                        💡 <strong>Nutrition Tips:</strong> Stay hydrated, eat balanced meals with protein, healthy fats, and carbohydrates. Adjust portions based on your activity level.
+                    </p>
+                    <a href="{% url 'dashboard' %}" class="btn">← Back to Dashboard</a>
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Nutrition Info Cards -->
+            {% if meals %}
+            <div class="grid-2">
+                <div class="card">
+                    <h4 style="color: #f59e0b;">✅ Nutrition Guidelines</h4>
+                    <ul style="line-height: 1.8; color: #6b7280;">
+                        <li>Eat 5-6 small meals per day</li>
+                        <li>Protein in every meal (25-40g)</li>
+                        <li>Include complex carbohydrates</li>
+                        <li>Don't skip breakfast</li>
+                        <li>Drink 2-3 liters of water daily</li>
+                    </ul>
+                </div>
+
+                <div class="card">
+                    <h4 style="color: #f59e0b;">🎯 Daily Goals</h4>
+                    <div class="profile-info">
+                        <div class="info-item">
+                            <div class="info-label">Protein Target</div>
+                            <div style="font-size: 1.2rem; color: #f59e0b; font-weight: 600;">25-40g per meal</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Daily Hydration</div>
+                            <div style="font-size: 1.2rem; color: #f59e0b; font-weight: 600;">2-3 Liters</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Back Button -->
+            {% if not meals %}
+            <div class="text-center">
+                <a href="{% url 'dashboard' %}" class="btn">← Back to Dashboard</a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2026 FitnessPro - Your Personal AI Fitness Assistant</p>
+        <p>Transform your fitness journey with intelligent workout and diet planning</p>
+    </footer>
+</body>
+</html>

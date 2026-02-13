@@ -1,0 +1,24 @@
+<h3>Fitness Level: {{ level }}</h3>
+
+<h4>AI Generated Workout Plan</h4>
+<pre>{{ ai_workout_plan }}</pre>
+
+<h3>Today's Workout - Day {{ current_day }}</h3>
+
+{% if completed %}
+    <p style="color: green;">Workout Completed Today!</p>
+{% else %}
+    <form action="" method="post">
+        {% csrf_token %}
+        <button type="submit" name="complete_workout">
+            Mark as Completed    
+        </button>
+    </form>
+{% endif %}
+
+<h4>Tomorrow: Day {{ tomorrow_day }}</h4>
+
+<h3>Current Streak: {{ streak }} days</h3>
+{% if streak >= 7 %}
+    <p style="color: gold;">Amazing! 7+ Day Warrior!</p>
+{% endif %}

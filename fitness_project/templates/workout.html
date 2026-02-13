@@ -1,0 +1,230 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FitnessPro - Workout Plans</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <style>
+        .workout-header {
+            background: linear-gradient(135deg, #22c55e 0%, #10b981 100%);
+            color: white;
+            padding: 2rem;
+            border-radius: 12px;
+            margin-bottom: 2rem;
+        }
+        .workout-header h2 {
+            color: white;
+            margin-bottom: 1rem;
+        }
+        .workout-meta {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        .meta-item {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 1rem;
+            border-radius: 8px;
+        }
+        .workout-day {
+            background: linear-gradient(135deg, #f0fdf4 0%, #f0fef9 100%);
+            border-left: 4px solid #22c55e;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+        .workout-day:hover {
+            box-shadow: 0 4px 12px rgba(34, 197, 94, 0.15);
+            transform: translateY(-2px);
+        }
+        .workout-day h4 {
+            color: #22c55e;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .workout-content {
+            background: white;
+            padding: 1rem;
+            border-radius: 6px;
+            color: #1f2937;
+            line-height: 1.8;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            font-size: 0.95rem;
+        }
+        .back-button {
+            display: inline-block;
+            margin-top: 2rem;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header Navigation -->
+    <header>
+        <nav>
+            <a href="#" class="logo">
+                <span class="logo-icon">💪</span>
+                <span>FitnessPro</span>
+            </a>
+            <ul class="nav-links">
+                <li><a href="{% url 'dashboard' %}">Dashboard</a></li>
+                <li><a href="/workout/">Workouts</a></li>
+                <li><a href="/diet/">Diet Plans</a></li>
+                <li><a href="{% url 'profile' %}">Profile</a></li>
+            </ul>
+            <div class="user-info">
+                <span>👤 {{ request.user.username }}</span>
+                <a href="{% url 'logout' %}" class="logout-btn">Logout</a>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <div class="content-wrapper">
+        <div class="container">
+            <!-- Workout Header with Meta Info -->
+            <div class="workout-header">
+                <h2>🏋️ Your Personalized AI Workout Plan</h2>
+                <p style="margin: 0; opacity: 0.95;">Follow this 7-day program tailored to your fitness level and goals</p>
+                <div class="workout-meta">
+                    <div class="meta-item">
+                        <strong>💪 Fitness Level:</strong><br>{{ level|default:"Based on your profile" }}
+                    </div>
+                    <div class="meta-item">
+                        <strong>🎯 Goal:</strong><br>{{ goal|default:"Fitness improvement" }}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Today's Workout Status Card -->
+            <div class="card" style="border-top: 4px solid {% if completed %}#10b981{% else %}#f59e0b{% endif %};">
+                <div class="card-header">
+                    <h3 style="margin: 0;">📅 Today's Workout - Day {{ current_day }} of 7</h3>
+                </div>
+                <div class="card-body">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; align-items: center;">
+                        <div>
+                            {% if completed %}
+                                <div style="padding: 1.5rem; background: #d1fae5; border-left: 4px solid #10b981; border-radius: 8px; text-align: center;">
+                                    <div style="font-size: 3rem; margin-bottom: 0.5rem;">✅</div>
+                                    <h4 style="margin: 0.5rem 0; color: #047857;">Today's Workout Completed!</h4>
+                                    <p style="margin: 0; color: #059669; font-size: 0.95rem;">Great job! You're maintaining your streak!</p>
+                                </div>
+                            {% else %}
+                                <div style="padding: 1.5rem; background: #fef3c7; border-left: 4px solid #f59e0b; border-radius: 8px; text-align: center;">
+                                    <div style="font-size: 3rem; margin-bottom: 0.5rem;">⏳</div>
+                                    <h4 style="margin: 0.5rem 0; color: #92400e;">Workout Pending</h4>
+                                    <p style="margin: 0; color: #b45309; font-size: 0.95rem;">Complete today's workout to keep your streak alive!</p>
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <div>
+                            <div style="background: #f9fafb; padding: 1.5rem; border-radius: 8px; border: 2px dashed #e5e7eb;">
+                                <h4 style="margin-top: 0; color: #374151;">🔥 Current Streak</h4>
+                                <div style="font-size: 2.5rem; font-weight: 700; color: #ff6b6b; margin: 0.5rem 0;">{{ streak }} days</div>
+                                <p style="margin: 0; color: #6b7280; font-size: 0.9rem;">Keep it going! Each workout counts!</p>
+                                {% if streak >= 7 %}
+                                    <div style="margin-top: 1rem; padding: 0.75rem; background: #fef08a; border-radius: 6px; text-align: center; color: #92400e; font-weight: 600;">
+                                        🏆 7+ Day Champion!
+                                    </div>
+                                {% endif %}
+                                {% if streak >= 30 %}
+                                    <div style="margin-top: 0.5rem; padding: 0.75rem; background: #dbeafe; border-radius: 6px; text-align: center; color: #1e40af; font-weight: 600;">
+                                        🌟 30+ Day Warrior!
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Mark Workout as Completed Form -->
+                    {% if not completed %}
+                    <div style="margin-top: 2rem; padding: 1.5rem; background: linear-gradient(135deg, #f0fdf4 0%, #f0fef9 100%); border-radius: 8px; border: 2px solid #22c55e;">
+                        <h4 style="margin-top: 0; color: #22c55e; text-align: center;">Complete Your Workout</h4>
+                        <p style="text-align: center; color: #6b7280; margin: 0.5rem 0 1.5rem 0;">Have you completed today's workout? Mark it below to update your progress and maintain your streak!</p>
+                        <form method="POST" style="display: flex; flex-direction: column; gap: 1rem;">
+                            {% csrf_token %}
+                            <textarea name="workout_notes" placeholder="Add optional notes about your workout (e.g., felt great, need to improve form, etc.)" style="padding: 1rem; border: 1px solid #d1d5db; border-radius: 6px; font-family: inherit; font-size: 0.95rem; resize: vertical; min-height: 80px; color: #1f2937;"></textarea>
+                            <button type="submit" name="complete_workout" style="padding: 1rem 2rem; background: linear-gradient(135deg, #22c55e 0%, #10b981 100%); color: white; border: none; border-radius: 6px; font-weight: 600; font-size: 1.05rem; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 4px 6px rgba(34, 197, 94, 0.3);">
+                                ✅ Mark Workout as Completed
+                            </button>
+                            <small style="text-align: center; color: #6b7280;">This will update your progress in the dashboard and add to your streak!</small>
+                        </form>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- 7-Day Workout Plan -->
+            <div class="card">
+                <div class="card-header">
+                    <h3 style="margin: 0;">📅 7-Day Workout Schedule</h3>
+                </div>
+
+                <div class="card-body">
+                    {% if ai_workout_plan %}
+                        <!-- Parse and display workout days -->
+                        <div class="workout-day">
+                            <h4>📋 Your Complete Workout Plan</h4>
+                            <div class="workout-content">
+                                {{ ai_workout_plan }}
+                            </div>
+                        </div>
+                    {% else %}
+                        <div class="alert alert-info">
+                            <span>ℹ️</span>
+                            <p style="margin: 0;">No AI workout plan generated yet. Please ensure your profile is complete.</p>
+                        </div>
+                    {% endif %}
+                </div>
+
+                <div class="card-footer">
+                    <p style="color: #6b7280; font-size: 0.9rem; margin-bottom: 1rem;">
+                        💡 <strong>Pro Tip:</strong> Start with lighter weights and focus on proper form. Gradually increase intensity as you get stronger.
+                    </p>
+                    <a href="{% url 'dashboard' %}" class="btn back-button">← Back to Dashboard</a>
+                </div>
+            </div>
+
+            <!-- Tips Section -->
+            <div class="grid-2">
+                <div class="card">
+                    <h4 style="color: #22c55e;">✅ Workout Tips</h4>
+                    <ul style="line-height: 1.8; color: #6b7280;">
+                        <li>Warm up for 5-10 minutes before starting</li>
+                        <li>Rest 48 hours between intense workouts</li>
+                        <li>Stay hydrated throughout your workout</li>
+                        <li>Maintain proper posture and form</li>
+                        <li>Listen to your body and avoid overexertion</li>
+                    </ul>
+                </div>
+
+                <div class="card">
+                    <h4 style="color: #22c55e;">🎯 Goals & Progress</h4>
+                    <ul style="line-height: 1.8; color: #6b7280;">
+                        <li>Track your workouts daily</li>
+                        <li>Measure progress weekly</li>
+                        <li>Take progress photos</li>
+                        <li>Adjust intensity as needed</li>
+                        <li>Combine with proper nutrition</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2026 FitnessPro - Your Personal AI Fitness Assistant</p>
+        <p>Transform your fitness journey with intelligent workout and diet planning</p>
+    </footer>
+</body>
+</html>

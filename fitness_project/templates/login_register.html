@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+{% load static %}
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FitnessPro - Login & Register</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #22c55e 0%, #10b981 100%);
+        }
+        .auth-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            width: 100%;
+            max-width: 1000px;
+            padding: 2rem;
+        }
+        .auth-card {
+            background: white;
+            padding: 2.5rem;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+        .auth-card h2 {
+            margin-bottom: 1.5rem;
+            color: #22c55e;
+        }
+        .input-group {
+            margin-bottom: 1.5rem;
+        }
+        .input-group input {
+            width: 100%;
+            padding: 0.875rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+        .input-group input:focus {
+            outline: none;
+            border-color: #22c55e;
+            box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.1);
+        }
+        .input-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #1f2937;
+        }
+        .auth-card button {
+            width: 100%;
+            padding: 1rem;
+            margin-top: 0.5rem;
+        }
+        @media (max-width: 768px) {
+            .auth-container {
+                grid-template-columns: 1fr;
+                max-width: 100%;
+            }
+            .auth-card {
+                padding: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="auth-container">
+        <!-- Register Card -->
+        <div class="auth-card">
+            <h2>📝 Create Account</h2>
+            <p style="color: #6b7280; margin-bottom: 1.5rem;">Join FitnessPro and start your fitness journey today!</p>
+            <form method="post">
+                {% csrf_token %}
+                <div class="input-group">
+                    <label for="reg-username">Username</label>
+                    <input type="text" id="reg-username" name="username" placeholder="Choose a username" required>
+                </div>
+                <div class="input-group">
+                    <label for="reg-email">Email</label>
+                    <input type="email" id="reg-email" name="email" placeholder="your@email.com" required>
+                </div>
+                <div class="input-group">
+                    <label for="reg-password">Password</label>
+                    <input type="password" id="reg-password" name="password" placeholder="••••••••" required>
+                </div>
+                <div class="input-group">
+                    <label for="reg-age">Age</label>
+                    <input type="number" id="reg-age" name="age" placeholder="25" min="13" max="120">
+                </div>
+                <div class="input-group">
+                    <label for="reg-gender">Gender</label>
+                    <select name="gender" id="reg-gender" style="width: 100%; padding: 0.875rem; border: 2px solid #e5e7eb; border-radius: 8px;">
+                        <option value="">Select gender</option>
+                        <option value="M">Male</option>
+                        <option value="F">Female</option>
+                        <option value="O">Other</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label for="reg-height">Height (meters)</label>
+                    <input type="number" id="reg-height" name="height" placeholder="1.75" step="0.01" min="1" max="3">
+                </div>
+                <div class="input-group">
+                    <label for="reg-weight">Weight (kg)</label>
+                    <input type="number" id="reg-weight" name="weight" placeholder="70" step="0.5" min="20" max="300">
+                </div>
+                <div class="input-group">
+                    <label for="reg-goal">Fitness Goal</label>
+                    <select name="goal" id="reg-goal" style="width: 100%; padding: 0.875rem; border: 2px solid #e5e7eb; border-radius: 8px;">
+                        <option value="">Select your goal</option>
+                        <option value="Weight Loss">Weight Loss</option>
+                        <option value="Muscle Gain">Muscle Gain</option>
+                        <option value="Maintenance">Maintenance</option>
+                        <option value="Strength">Strength</option>
+                        <option value="Endurance">Endurance</option>
+                    </select>
+                </div>
+                <button type="submit" name="register" class="btn btn-block" style="font-size: 1rem; padding: 1rem;">Create Account</button>
+            </form>
+        </div>
+
+        <!-- Login Card -->
+        <div class="auth-card">
+            <h2>🔐 Login</h2>
+            <p style="color: #6b7280; margin-bottom: 1.5rem;">Welcome back! Log in to your account</p>
+            <form method="post">
+                {% csrf_token %}
+                <div class="input-group">
+                    <label for="login-username">Username</label>
+                    <input type="text" id="login-username" name="username" placeholder="Your username" required>
+                </div>
+                <div class="input-group">
+                    <label for="login-password">Password</label>
+                    <input type="password" id="login-password" name="password" placeholder="••••••••" required>
+                </div>
+                <button type="submit" name="login" class="btn btn-block" style="font-size: 1rem; padding: 1rem;">Sign In</button>
+                <p style="text-align: center; margin-top: 1rem; color: #6b7280; font-size: 0.9rem;">
+                    Don't have an account? ↑ Register above
+                </p>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

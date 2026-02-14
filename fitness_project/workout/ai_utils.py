@@ -23,7 +23,7 @@ def generate_workout_plan(profile, level, goal):
 
     User details:
     - Age: {profile.age}
-    - Height: {profile.height} m
+    - Height: {profile.height} cm
     - Weight: {profile.weight} kg
     - BMI: {round(profile.weight / ((profile.height/100)**2), 2)}
     - Fitness level: {level}

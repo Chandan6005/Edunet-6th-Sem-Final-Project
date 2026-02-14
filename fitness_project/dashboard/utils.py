@@ -1,5 +1,7 @@
 def calculate_bmi(weight, height):
-    return round(weight / (height * height), 2)
+    # height is in centimeters, convert to meters for BMI calculation
+    height_in_meters = height / 100
+    return round(weight / (height_in_meters * height_in_meters), 2)
 
 def bmi_category(bmi):
     if bmi <18.5:

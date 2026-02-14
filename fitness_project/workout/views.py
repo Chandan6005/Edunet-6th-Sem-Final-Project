@@ -29,7 +29,7 @@ def workout_view(request):
     goal = GOAL_MAP.get(RAW_GOAL, 'maintain')
     
     age = profile.age or 25
-    height = profile.height or 1.7
+    height = profile.height or 170
     weight = profile.weight or 70
 
     bmi = None
